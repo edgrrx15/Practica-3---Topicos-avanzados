@@ -1,0 +1,10 @@
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\bin\Debug\Practica3.exe.config
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\bin\Debug\Practica3.exe
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\bin\Debug\Practica3.pdb
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.csproj.AssemblyReference.cache
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.Properties.Resources.resources
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.csproj.GenerateResource.cache
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.csproj.CoreCompileInputs.cache
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.exe
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.pdb
+C:\Users\chapa\source\repos\Topicos Avanzados\Practica3\Practica3\obj\Debug\Practica3.exe.config
