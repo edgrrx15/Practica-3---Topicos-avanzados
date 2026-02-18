@@ -2,6 +2,7 @@ using Practica3.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 namespace Practica3
 {
@@ -28,18 +29,12 @@ namespace Practica3
         private const int MAX_WIDTH_FORMULARIO = 1000;
         private const int MAX_HEIGHT_FORMULARIO = 800;
 
-        private const int MAX_TAMANO_BOTON = 70;
-        private const int MIN_TAMANO_BOTON = 25;
+        private const int MAX_TAMANO_BOTON = 90;
+        private const int MIN_TAMANO_BOTON = 40;
 
         //velocidad del boton
         int dx = VELOCIDAD_INICIAL; // Velocidad horizontal del botón
         int dy = VELOCIDAD_INICIAL; // Velocidad vertical del botón
-
-        //==================================================
-        //Objetos moviles 
-        //==================================================
-        // **** Los objetos moviles son los botones clonados y los formularios clonados,
-        //      se almacenan en listas para poder manipularlos despues 
 
         // Rectangulos para detectar las colisiones en las esquinas del formulario
         private Rectangle rectanguloArribaIzquierda;
@@ -47,6 +42,11 @@ namespace Practica3
         private Rectangle rectanguloAbajoIzquierda;
         private Rectangle rectanguloAbajoDerecha;
 
+        //==================================================
+        //Objetos moviles 
+        //==================================================
+        // **** Los objetos moviles son los botones clonados y los formularios clonados,
+        //      se almacenan en listas para poder manipularlos despues 
         private List<Button> botonesClon = new List<Button>(); // Lista para almacenar los botones clonados
         private List<Form> formulariosClon = new List<Form>(); // Lista para almacenar los formularios clonados
         private readonly Dictionary<Button, Point> velClones = new Dictionary<Button, Point>(); // Diccionario para almacenar las velocidades de los botones clonados (hecho con IA)
@@ -62,13 +62,42 @@ namespace Practica3
         };
 
         // ==================================================
-        // Coloca diferentes imagenes para cada colision en las esquinas del formulario
-        private readonly Image[] imagenesColision = {
-            Properties.Resources.naveEspacial, // Imagen para la colision en la esquina superior izquierda
-            Properties.Resources.naveEspacial, // Imagen para la colision en la esquina superior derecha
-            Properties.Resources.naveEspacial, // Imagen para la colision en la esquina inferior izquierda
-            Properties.Resources.naveEspacial, // Imagen para la colision en la esquina inferior derecha
+        // Imágenes aleatorias (Minions, pociones, nave) — cargadas desde recursos embebidos, sin rutas
+        private static readonly string[] NombresRecursosImagenes = {
+            "Practica3.Properties.Imagenes.minion.png",
+            "Practica3.Properties.Imagenes.minionBb.png",
+            "Practica3.Properties.Imagenes.minionBebe.png",
+            "Practica3.Properties.Imagenes.pocion.png",
+            "Practica3.Properties.Imagenes.pocionMagica.png",
         };
+        private static Image CargarImagenRecurso(string nombreRecurso)
+        {
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                using (var stream = asm.GetManifestResourceStream(nombreRecurso))
+                {
+                    if (stream != null)
+                    {
+                        var img = Image.FromStream(stream);
+                        return new Bitmap(img);
+                    }
+                }
+            }
+            catch { /* ignorar si falta el recurso */ }
+            return Resources.minion;
+        }
+        private static Image[] CrearArregloImagenesColision()
+        {
+            var lista = new List<Image> { Resources.naveEspacial };
+            foreach (var nombre in NombresRecursosImagenes)
+            {
+                var img = CargarImagenRecurso(nombre);
+                if (img != null) lista.Add(img);
+            }
+            return lista.ToArray();
+        }
+        private readonly Image[] imagenesColision = CrearArregloImagenesColision();
 
         private void ConfigurarVentana()
         {
@@ -84,7 +113,7 @@ namespace Practica3
 
             Label lbl = new Label
             {
-                Text = "Clic en ventana = REINICIAR   |   Clic en COHETE = SALIR",
+                Text = "Clic en ventana = REINICIAR   |   Clic en Boton = SALIR",
                 ForeColor = Color.FromArgb(90, 140, 190),
                 BackColor = Color.Transparent,
                 AutoSize = true,
@@ -100,8 +129,11 @@ namespace Practica3
             botonPRIMARIO.Size = new Size(50, 50);
             botonPRIMARIO.Location = new Point((ClientSize.Width - botonPRIMARIO.Width) / 2, (ClientSize.Height - botonPRIMARIO.Height) / 2);
             botonPRIMARIO.Cursor = Cursors.Hand;
-            botonPRIMARIO.Image = Resources.naveEspacial;
             botonPRIMARIO.BackgroundImageLayout = ImageLayout.Stretch;
+            botonPRIMARIO.FlatStyle = FlatStyle.Flat;
+            botonPRIMARIO.FlatAppearance.BorderSize = 0;
+            botonPRIMARIO.Image = Resources.naveEspacial;
+            botonPRIMARIO.BackgroundImage = imagenesColision[rnd.Next(imagenesColision.Length)];
             Controls.Add(botonPRIMARIO);
             botonPRIMARIO.BringToFront();
             botonPRIMARIO.Click += BotonPRIMARIO_Click; // Evento que se ejecuta al hacer clic en el botón
@@ -271,9 +303,10 @@ namespace Practica3
             Button botonClonado = new Button
             {
                 Location = botonPRIMARIO.Location,
-                BackgroundImage = imagenesColision[0],
-                BackColor = Color.Red,
+                BackgroundImage = imagenesColision[rnd.Next(imagenesColision.Length)],
                 BackgroundImageLayout = ImageLayout.Stretch,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
                 Size = new Size(30, 30),
             };
             botonesClon.Add(botonClonado);
@@ -377,9 +410,12 @@ namespace Practica3
         //==================================================
         public void ColisionArribaDerecha()
         {
-            this.BackColor = bgColores[rnd.Next(bgColores.Length)];
-            this.Width = Math.Min(this.Width + 20, MAX_WIDTH_FORMULARIO);
-            this.Height = Math.Min(this.Height + 20, MAX_HEIGHT_FORMULARIO);
+            if (botonPRIMARIO.Bounds.IntersectsWith(rectanguloArribaDerecha))
+            {
+                this.BackColor = bgColores[rnd.Next(bgColores.Length)];
+                this.Width = Math.Min(this.Width + 20, MAX_WIDTH_FORMULARIO);
+                this.Height = Math.Min(this.Height + 20, MAX_HEIGHT_FORMULARIO);
+            }
         }
 
         //==================================================
@@ -433,7 +469,7 @@ namespace Practica3
             }
             botonesClon.Clear(); // Limpia la lista de botones clonados
 
-            // 3) (Si tienes formularios clonados)
+            // 3) (Si hay formularios clonados)
             foreach (var f in formulariosClon)
             {
                 if (!f.IsDisposed) f.Close();
@@ -446,20 +482,13 @@ namespace Practica3
                 (this.ClientSize.Width - botonPRIMARIO.Width) / 2,
                 (this.ClientSize.Height - botonPRIMARIO.Height) / 2
             );
-
             this.Size = new Size(WIDTH_FORMULARIO, HEIGHT_FORMULARIO);
-
-
-            // botonPRIMARIO.BackgroundImage = imagenesColision[0]; // 
+            botonPRIMARIO.BackgroundImage = imagenesColision[rnd.Next(imagenesColision.Length)];
 
             // 5) Restaurar velocidades
             dx = VELOCIDAD_INICIAL;
             dy = VELOCIDAD_INICIAL;
 
-            // 6) Reiniciar lo demás que cambies (colores, tamaño de forma, contadores, etc.)
-            // indiceColor = 0; tamañoForma = inicial; etc.
-
-            // 7) Reanudar
             temporizador.Start();
         }
 

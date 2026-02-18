@@ -27,6 +27,7 @@ namespace Practica3.Properties
     internal class Resources
     {
         internal static Image naveEspacial;
+        internal static Image minion;
         private static global::System.Resources.ResourceManager resourceMan;
 
         private static global::System.Globalization.CultureInfo resourceCulture;
