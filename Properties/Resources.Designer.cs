@@ -26,8 +26,11 @@ namespace Practica3.Properties
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources
     {
-        internal static Image naveEspacial;
         internal static Image minion;
+        internal static Image minionBb;
+        internal static Image minionBebe;
+        internal static Image pocion;
+        internal static Image pocionMagica;
         private static global::System.Resources.ResourceManager resourceMan;
 
         private static global::System.Globalization.CultureInfo resourceCulture;

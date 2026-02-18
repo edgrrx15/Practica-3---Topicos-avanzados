@@ -77,7 +77,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\naveEspacial.png" />
     <EmbeddedResource Include="Properties\Imagenes\minion.png" />
     <EmbeddedResource Include="Properties\Imagenes\minionBb.png" />
     <EmbeddedResource Include="Properties\Imagenes\minionMorado.png" />

@@ -2,6 +2,7 @@ using Practica3.Properties;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 namespace Practica3
@@ -62,42 +63,66 @@ namespace Practica3
         };
 
         // ==================================================
-        // Imágenes aleatorias (Minions, pociones, nave) — cargadas desde recursos embebidos, sin rutas
-        private static readonly string[] NombresRecursosImagenes = {
-            "Practica3.Properties.Imagenes.minion.png",
-            "Practica3.Properties.Imagenes.minionBb.png",
-            "Practica3.Properties.Imagenes.minionBebe.png",
-            "Practica3.Properties.Imagenes.pocion.png",
-            "Practica3.Properties.Imagenes.pocionMagica.png",
-        };
-        private static Image CargarImagenRecurso(string nombreRecurso)
+        // Imágenes aleatorias (HECHO CON IA)
+        private static Image[] imagenesColision; 
+
+        // Método para cargar imágenes desde recursos embebidos
+        private static Image[] CargarImagenesDesdeRecursos()
         {
-            try
+            //Se obtiene el ensamblado actual para acceder a los recursos embebidos
+            //Es decir, las imágenes que se han agregado al proyecto como recursos (en este caso, las imágenes de los minions y las pociones)
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            // Se define un arreglo con los nombres completos de los recursos embebidos (incluyendo el espacio de nombres y la carpeta donde se encuentran)
+            string[] recursos = { 
+                "Practica3.Properties.Imagenes.minion.png",
+                "Practica3.Properties.Imagenes.minionBb.png",
+                "Practica3.Properties.Imagenes.minionBebe.png",
+                "Practica3.Properties.Imagenes.minionMorado.png",
+                "Practica3.Properties.Imagenes.pocion.png",
+                "Practica3.Properties.Imagenes.pocionMagica.png",
+            };
+
+            // Se crea una lista para almacenar las imágenes cargadas desde los recursos
+            List<Image> imagenes = new List<Image>();
+
+            // Se itera sobre cada nombre de recurso en el arreglo, intentando cargar la imagen correspondiente desde el ensamblado
+            foreach (string recurso in recursos)
             {
-                var asm = Assembly.GetExecutingAssembly();
-                using (var stream = asm.GetManifestResourceStream(nombreRecurso))
+                //Se usa try-catch para manejar cualquier error que pueda ocurrir durante la carga de la imagen
+                //(por ejemplo, si el recurso no existe o no se pudo cargar correctamente)
+                try
                 {
-                    if (stream != null)
+                    using (Stream stream = assembly.GetManifestResourceStream(recurso))
                     {
-                        var img = Image.FromStream(stream);
-                        return new Bitmap(img);
+                        if (stream != null)
+                        {
+                            imagenes.Add(Image.FromStream(stream));
+                        }
                     }
                 }
+                catch
+                {
+                    // Si falla la carga, continúa con el siguiente
+                    continue;
+                }
             }
-            catch { /* ignorar si falta el recurso */ }
-            return Resources.minion;
-        }
-        private static Image[] CrearArregloImagenesColision()
-        {
-            var lista = new List<Image> { Resources.naveEspacial };
-            foreach (var nombre in NombresRecursosImagenes)
+
+            // Si no se cargó ninguna imagen, crear una imagen de marcador de posición
+            if (imagenes.Count == 0)
             {
-                var img = CargarImagenRecurso(nombre);
-                if (img != null) lista.Add(img);
+                Bitmap placeholder = new Bitmap(50, 50);
+                using (Graphics g = Graphics.FromImage(placeholder))
+                {
+                    g.Clear(Color.Magenta);
+                    using (Font f = new Font("Arial", 16, FontStyle.Bold))
+                        g.DrawString("?", f, Brushes.White, 15, 10);
+                }
+                imagenes.Add(placeholder);
             }
-            return lista.ToArray();
+
+            return imagenes.ToArray(); // Devuelve el arreglo de imágenes cargadas desde los recursos
         }
-        private readonly Image[] imagenesColision = CrearArregloImagenesColision();
 
         private void ConfigurarVentana()
         {
@@ -132,7 +157,6 @@ namespace Practica3
             botonPRIMARIO.BackgroundImageLayout = ImageLayout.Stretch;
             botonPRIMARIO.FlatStyle = FlatStyle.Flat;
             botonPRIMARIO.FlatAppearance.BorderSize = 0;
-            botonPRIMARIO.Image = Resources.naveEspacial;
             botonPRIMARIO.BackgroundImage = imagenesColision[rnd.Next(imagenesColision.Length)];
             Controls.Add(botonPRIMARIO);
             botonPRIMARIO.BringToFront();
@@ -151,6 +175,7 @@ namespace Practica3
         {
             InitializeComponent();
             ConfigurarVentana();
+            imagenesColision = CargarImagenesDesdeRecursos();
             ConfigurarBoton();
             IniciarTimer();
         }
