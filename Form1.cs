@@ -245,7 +245,7 @@ namespace Practica3
                     b.Left = 0;
                     v.X = -v.X; // Rebote en el borde izquierdo
                 }
-                else if (b.Right > ClientSize.Width) 
+                else if (b.Right > ClientSize.Width)
                 {
                     b.Left = ClientSize.Width - b.Width;
                     v.X = -v.X;
@@ -253,7 +253,7 @@ namespace Practica3
 
                 if (b.Top < 0)
                 {
-                    b.Top = 0; 
+                    b.Top = 0;
                     v.Y = -v.Y;
                 }
                 else if (b.Bottom > ClientSize.Height)
@@ -277,7 +277,7 @@ namespace Practica3
         //==================================================
         private void ActualizarRectangulos()
         {
-            rectanguloArribaIzquierda = new Rectangle(0, 0, botonPRIMARIO.Width, botonPRIMARIO.Height); 
+            rectanguloArribaIzquierda = new Rectangle(0, 0, botonPRIMARIO.Width, botonPRIMARIO.Height);
             rectanguloArribaDerecha = new Rectangle(this.ClientSize.Width - botonPRIMARIO.Width, 0, botonPRIMARIO.Width, botonPRIMARIO.Height);
             rectanguloAbajoIzquierda = new Rectangle(0, this.ClientSize.Height - botonPRIMARIO.Height, botonPRIMARIO.Width, botonPRIMARIO.Height);
             rectanguloAbajoDerecha = new Rectangle(this.ClientSize.Width - botonPRIMARIO.Width, this.ClientSize.Height - botonPRIMARIO.Height, botonPRIMARIO.Width, botonPRIMARIO.Height);
@@ -329,7 +329,7 @@ namespace Practica3
         {
             if (botonesClon.Count > 0)
             {
-                Button botonAEliminar = botonesClon[0]; 
+                Button botonAEliminar = botonesClon[0];
                 Controls.Remove(botonAEliminar);
                 botonesClon.RemoveAt(0);
                 velClones.Remove(botonAEliminar);
@@ -355,7 +355,7 @@ namespace Practica3
                 MinimizeBox = false,
             };
 
-            formularioClonado.Paint += (s, e) => PintarEstrellas(e.Graphics, formularioClonado.ClientSize, 80); 
+            formularioClonado.Paint += (s, e) => PintarEstrellas(e.Graphics, formularioClonado.ClientSize, 80);
 
             // Agregar el formulario clonado a la lista de formularios clonados
             if (formulariosClon.Count < MAX_FORMULARIOS)
@@ -397,7 +397,7 @@ namespace Practica3
         public void ColisionArribaIzquierda()
         {
             botonPRIMARIO.Size = new Size(
-                Math.Min(botonPRIMARIO.Width + 10, MAX_TAMANO_BOTON), 
+                Math.Min(botonPRIMARIO.Width + 10, MAX_TAMANO_BOTON),
                 Math.Min(botonPRIMARIO.Height + 10, MAX_TAMANO_BOTON)
             );
             botonPRIMARIO.BackgroundImage = imagenesColision[rnd.Next(imagenesColision.Length)];
@@ -477,7 +477,7 @@ namespace Practica3
             formulariosClon.Clear();
 
             // 4) Restaurar botón primario (posición/tamaño/imagen)
-            botonPRIMARIO.Size = new Size(50, 50);
+            botonPRIMARIO.Size = new Size(70, 70);
             botonPRIMARIO.Location = new Point(
                 (this.ClientSize.Width - botonPRIMARIO.Width) / 2,
                 (this.ClientSize.Height - botonPRIMARIO.Height) / 2
